@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'firebootcamp-crm-march2021';
+  title = 'Firebootcamp CRM';
+  someDate = new Date();
+
+
+
 }
