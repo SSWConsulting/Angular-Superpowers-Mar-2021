@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Company } from '../company';
 import { CompanyService } from '../company.service';
+
+import { catchError, finalize, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'fbc-company-list',
@@ -8,7 +11,7 @@ import { CompanyService } from '../company.service';
   styleUrls: ['./company-list.component.scss']
 })
 export class CompanyListComponent implements OnInit {
-  companies: Company[];
+  companies$: Observable<Company[]>;
 
   constructor(private companyService: CompanyService) { }
 
@@ -17,25 +20,10 @@ export class CompanyListComponent implements OnInit {
   }
 
   getCompanies(): void {
-    this.companyService.getCompanies()
-    .subscribe((companies : Company[]) => {
-      console.log('New value from observable', companies)
-      this.companies = companies;
-    },
-    (error) => {
-      console.error(error);
-    },
-    () => {
-      console.log('The observable has completed');
-    }
+    this.companies$ = this.companyService.getCompanies()
+    .pipe(
+      tap((companies) => console.log('tapping to getCompanies', companies)),
+      finalize(() => console.log('FINALIZE'))
     );
-
-    // let component : CompanyListComponent = this;
-    // this.companyService.getCompanies()
-    // .subscribe(
-    //   function(companies: Company[]) {
-    //     component.companies = companies;
-    //   }
-    // );
   }
 }
