@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Company } from '../company';
-import { CompanyService } from '../company.service';
-
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { Select, Store } from '@ngxs/store';
+import { CompanyState } from 'src/store/company/company.state';
+import { DeleteCompany, LoadCompanies } from 'src/store/company/company.actions';
 
 @Component({
   selector: 'fbc-company-list',
@@ -11,23 +11,19 @@ import { catchError, finalize, tap } from 'rxjs/operators';
   styleUrls: ['./company-list.component.scss']
 })
 export class CompanyListComponent implements OnInit {
+
+  @Select(CompanyState.companies)
   companies$: Observable<Company[]>;
 
-  constructor(private companyService: CompanyService) { }
+  constructor(
+    private store: Store,
+  ) { }
 
   ngOnInit(): void {
-    this.loadCompanies();
+    this.store.dispatch(new LoadCompanies());
   }
 
   deleteCompany(company: Company): void {
-    this.companyService.deleteCompany(company);
-  }
-
-  loadCompanies() {
-    this.companies$ = this.companyService.getCompanies()
-    .pipe(
-      tap((companies) => console.log('tapping to getCompanies', companies)),
-      finalize(() => console.log('FINALIZE'))
-    );
+    this.store.dispatch(new DeleteCompany(company));
   }
 }

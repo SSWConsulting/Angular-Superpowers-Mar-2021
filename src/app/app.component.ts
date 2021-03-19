@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { CompanyService } from './company/company.service';
+import { CompanyState } from 'src/store/company/company.state';
 
 @Component({
   selector: 'fbc-root',
@@ -11,16 +11,14 @@ import { CompanyService } from './company/company.service';
 export class AppComponent implements OnInit {
   title = 'Firebootcamp CRM';
   someDate = new Date();
+
+  @Select(CompanyState.companyCount)
   companyCount$: Observable<number>;
 
   constructor(
-    private companyService: CompanyService,
   ) {}
 
   ngOnInit(): void {
-    this.companyCount$ = this.companyService.getCompanies().pipe(
-      map(companies => companies.length)
-    );
   }
 
 }
