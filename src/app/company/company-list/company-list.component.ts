@@ -17,6 +17,25 @@ export class CompanyListComponent implements OnInit {
   }
 
   getCompanies(): void {
-    this.companies = this.companyService.getCompanies();
+    this.companyService.getCompanies()
+    .subscribe((companies : Company[]) => {
+      console.log('New value from observable', companies)
+      this.companies = companies;
+    },
+    (error) => {
+      console.error(error);
+    },
+    () => {
+      console.log('The observable has completed');
+    }
+    );
+
+    // let component : CompanyListComponent = this;
+    // this.companyService.getCompanies()
+    // .subscribe(
+    //   function(companies: Company[]) {
+    //     component.companies = companies;
+    //   }
+    // );
   }
 }
