@@ -16,10 +16,17 @@ export class CompanyListComponent implements OnInit {
   constructor(private companyService: CompanyService) { }
 
   ngOnInit(): void {
-    this.getCompanies();
+    this.loadCompanies();
   }
 
-  getCompanies(): void {
+  deleteCompany(company: Company): void {
+    this.companyService.deleteCompany(company)
+    .subscribe(deletedCompany => {
+      this.loadCompanies();
+    });
+  }
+
+  loadCompanies() {
     this.companies$ = this.companyService.getCompanies()
     .pipe(
       tap((companies) => console.log('tapping to getCompanies', companies)),
