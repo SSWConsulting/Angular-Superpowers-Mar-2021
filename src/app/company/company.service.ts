@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Company } from './company';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { Company } from './company';
 })
 export class CompanyService {
 
-  API_BASE = 'https://firebootcamp-crm-api.azurewebsites.net/api';
+  API_BASE = environment.API_BASE;
 
   constructor(private httpClient: HttpClient) { }
 
