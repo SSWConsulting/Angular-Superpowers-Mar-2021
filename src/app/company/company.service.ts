@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Company } from './company';
@@ -12,35 +12,44 @@ export class CompanyService {
 
   API_BASE = environment.API_BASE;
 
-  constructor(private httpClient: HttpClient) { }
+  companies$ : BehaviorSubject<Company[]> = new BehaviorSubject<Company[]>([])
+
+  constructor(private httpClient: HttpClient) {
+    this.loadCompanies();
+  }
 
   public getCompanies(): Observable<Company[]> {
-    return this.httpClient.get<Company[]>(`${this.API_BASE}/company`)
-      .pipe(
-        catchError(this.errorHandler),
-        // catchError((error) => this.errorHandler(error)) Same as above
-      );
+    return this.companies$;
   }
 
-  public deleteCompany(company: Company): Observable<Company> {
+  loadCompanies(): void {
+    this.httpClient.get<Company[]>(`${this.API_BASE}/company`)
+    .pipe(
+      catchError(this.errorHandler),
+      // catchError((error) => this.errorHandler(error)) Same as above
+    )
+    .subscribe((companies: Company[]) => this.companies$.next(companies));
+  }
+
+  public deleteCompany(company: Company): void {
     console.log('Delete company in service');
-    return this.httpClient.delete<Company>(`${this.API_BASE}/company/${company.id}`)
+    this.httpClient.delete<Company>(`${this.API_BASE}/company/${company.id}`)
       .pipe(
         catchError(this.errorHandler),
-      );
+      ).subscribe(() => this.loadCompanies());
   }
 
-  public addCompany(company: Company): Observable<Company> {
+  public addCompany(company: Company): void {
     console.log('Adding company', company);
-    return this.httpClient.post<Company>(`${this.API_BASE}/company`, company).pipe(
+    this.httpClient.post<Company>(`${this.API_BASE}/company`, company).pipe(
       catchError(this.errorHandler),
-    );
+    ).subscribe(() => this.loadCompanies());
   }
 
-  public saveCompany(company: Company): Observable<Company> {
-    return this.httpClient.put<Company>(`${this.API_BASE}/company/${company.id}`, company).pipe(
+  public saveCompany(company: Company): void {
+    this.httpClient.put<Company>(`${this.API_BASE}/company/${company.id}`, company).pipe(
       catchError(this.errorHandler),
-    );
+    ).subscribe(() => this.loadCompanies());
   }
 
   public getCompany(id: number): Observable<Company> {
