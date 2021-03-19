@@ -36,6 +36,18 @@ export class CompanyService {
     );
   }
 
+  public saveCompany(company: Company): Observable<Company> {
+    return this.httpClient.put<Company>(`${this.API_BASE}/company/${company.id}`, company).pipe(
+      catchError(this.errorHandler),
+    );
+  }
+
+  public getCompany(id: number): Observable<Company> {
+    return this.httpClient.get<Company>(`${this.API_BASE}/company/${id}`).pipe(
+      catchError(this.errorHandler),
+    );
+  }
+
   public errorHandler(error): Observable<any> {
     console.error('ERROR IN THE PIPE', error);
     return new Observable<any>();
