@@ -29,6 +29,13 @@ export class CompanyService {
       );
   }
 
+  public addCompany(company: Company): Observable<Company> {
+    console.log('Adding company', company);
+    return this.httpClient.post<Company>(`${this.API_BASE}/company`, company).pipe(
+      catchError(this.errorHandler),
+    );
+  }
+
   public errorHandler(error): Observable<any> {
     console.error('ERROR IN THE PIPE', error);
     return new Observable<any>();
